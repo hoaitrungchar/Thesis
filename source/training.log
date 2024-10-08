@@ -1,0 +1,426 @@
+Seed set to 42
+/home/vndata/anaconda3/envs/SwinUnet/lib/python3.12/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /opt/conda/conda-bld/pytorch_1724789560443/work/aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+Trainer already configured with model summary callbacks: [<class 'pytorch_lightning.callbacks.rich_model_summary.RichModelSummary'>]. Skipping setting a default `ModelSummary` callback.
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+SwinTransformerSys expand initial----depths:[2, 2, 2, 2];depths_decoder:[1, 2, 2, 2];drop_path_rate:0.1;num_classes:1
+---final upsample expand_first---
+┏━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┓
+┃     ┃ Name                                              ┃ Type ┃ Par… ┃ Mode ┃
+┡━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━╇━━━━━━┩
+│ 0   │ net                                               │ Swi… │ 27.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 1   │ net.swin_unet                                     │ Swi… │ 27.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 2   │ net.swin_unet.patch_embed                         │ Pat… │  4.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 3   │ net.swin_unet.patch_embed.proj                    │ Con… │  4.7 │ tra… │
+│     │                                                   │      │    K │      │
+│ 4   │ net.swin_unet.patch_embed.norm                    │ Lay… │  192 │ tra… │
+│ 5   │ net.swin_unet.pos_drop                            │ Dro… │    0 │ tra… │
+│ 6   │ net.swin_unet.layers                              │ Mod… │ 20.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 7   │ net.swin_unet.layers.0                            │ Bas… │  299 │ tra… │
+│     │                                                   │      │    K │      │
+│ 8   │ net.swin_unet.layers.0.blocks                     │ Mod… │  225 │ tra… │
+│     │                                                   │      │    K │      │
+│ 9   │ net.swin_unet.layers.0.blocks.0                   │ Swi… │  112 │ tra… │
+│     │                                                   │      │    K │      │
+│ 10  │ net.swin_unet.layers.0.blocks.0.norm1             │ Lay… │  192 │ tra… │
+│ 11  │ net.swin_unet.layers.0.blocks.0.attn              │ Win… │ 37.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 12  │ net.swin_unet.layers.0.blocks.0.attn.qkv          │ Lin… │ 27.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 13  │ net.swin_unet.layers.0.blocks.0.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 14  │ net.swin_unet.layers.0.blocks.0.attn.proj         │ Lin… │  9.3 │ tra… │
+│     │                                                   │      │    K │      │
+│ 15  │ net.swin_unet.layers.0.blocks.0.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 16  │ net.swin_unet.layers.0.blocks.0.attn.softmax      │ Sof… │    0 │ tra… │
+│ 17  │ net.swin_unet.layers.0.blocks.0.drop_path         │ Ide… │    0 │ tra… │
+│ 18  │ net.swin_unet.layers.0.blocks.0.norm2             │ Lay… │  192 │ tra… │
+│ 19  │ net.swin_unet.layers.0.blocks.0.mlp               │ Mlp  │ 74.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 20  │ net.swin_unet.layers.0.blocks.0.mlp.fc1           │ Lin… │ 37.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 21  │ net.swin_unet.layers.0.blocks.0.mlp.act           │ GELU │    0 │ tra… │
+│ 22  │ net.swin_unet.layers.0.blocks.0.mlp.fc2           │ Lin… │ 37.0 │ tra… │
+│     │                                                   │      │    K │      │
+│ 23  │ net.swin_unet.layers.0.blocks.0.mlp.drop          │ Dro… │    0 │ tra… │
+│ 24  │ net.swin_unet.layers.0.blocks.1                   │ Swi… │  112 │ tra… │
+│     │                                                   │      │    K │      │
+│ 25  │ net.swin_unet.layers.0.blocks.1.norm1             │ Lay… │  192 │ tra… │
+│ 26  │ net.swin_unet.layers.0.blocks.1.attn              │ Win… │ 37.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 27  │ net.swin_unet.layers.0.blocks.1.attn.qkv          │ Lin… │ 27.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 28  │ net.swin_unet.layers.0.blocks.1.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 29  │ net.swin_unet.layers.0.blocks.1.attn.proj         │ Lin… │  9.3 │ tra… │
+│     │                                                   │      │    K │      │
+│ 30  │ net.swin_unet.layers.0.blocks.1.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 31  │ net.swin_unet.layers.0.blocks.1.attn.softmax      │ Sof… │    0 │ tra… │
+│ 32  │ net.swin_unet.layers.0.blocks.1.drop_path         │ Dro… │    0 │ tra… │
+│ 33  │ net.swin_unet.layers.0.blocks.1.norm2             │ Lay… │  192 │ tra… │
+│ 34  │ net.swin_unet.layers.0.blocks.1.mlp               │ Mlp  │ 74.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 35  │ net.swin_unet.layers.0.blocks.1.mlp.fc1           │ Lin… │ 37.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 36  │ net.swin_unet.layers.0.blocks.1.mlp.act           │ GELU │    0 │ tra… │
+│ 37  │ net.swin_unet.layers.0.blocks.1.mlp.fc2           │ Lin… │ 37.0 │ tra… │
+│     │                                                   │      │    K │      │
+│ 38  │ net.swin_unet.layers.0.blocks.1.mlp.drop          │ Dro… │    0 │ tra… │
+│ 39  │ net.swin_unet.layers.0.downsample                 │ Pat… │ 74.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 40  │ net.swin_unet.layers.0.downsample.reduction       │ Lin… │ 73.7 │ tra… │
+│     │                                                   │      │    K │      │
+│ 41  │ net.swin_unet.layers.0.downsample.norm            │ Lay… │  768 │ tra… │
+│ 42  │ net.swin_unet.layers.1                            │ Bas… │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 43  │ net.swin_unet.layers.1.blocks                     │ Mod… │  892 │ tra… │
+│     │                                                   │      │    K │      │
+│ 44  │ net.swin_unet.layers.1.blocks.0                   │ Swi… │  446 │ tra… │
+│     │                                                   │      │    K │      │
+│ 45  │ net.swin_unet.layers.1.blocks.0.norm1             │ Lay… │  384 │ tra… │
+│ 46  │ net.swin_unet.layers.1.blocks.0.attn              │ Win… │  149 │ tra… │
+│     │                                                   │      │    K │      │
+│ 47  │ net.swin_unet.layers.1.blocks.0.attn.qkv          │ Lin… │  111 │ tra… │
+│     │                                                   │      │    K │      │
+│ 48  │ net.swin_unet.layers.1.blocks.0.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 49  │ net.swin_unet.layers.1.blocks.0.attn.proj         │ Lin… │ 37.1 │ tra… │
+│     │                                                   │      │    K │      │
+│ 50  │ net.swin_unet.layers.1.blocks.0.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 51  │ net.swin_unet.layers.1.blocks.0.attn.softmax      │ Sof… │    0 │ tra… │
+│ 52  │ net.swin_unet.layers.1.blocks.0.drop_path         │ Dro… │    0 │ tra… │
+│ 53  │ net.swin_unet.layers.1.blocks.0.norm2             │ Lay… │  384 │ tra… │
+│ 54  │ net.swin_unet.layers.1.blocks.0.mlp               │ Mlp  │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 55  │ net.swin_unet.layers.1.blocks.0.mlp.fc1           │ Lin… │  148 │ tra… │
+│     │                                                   │      │    K │      │
+│ 56  │ net.swin_unet.layers.1.blocks.0.mlp.act           │ GELU │    0 │ tra… │
+│ 57  │ net.swin_unet.layers.1.blocks.0.mlp.fc2           │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 58  │ net.swin_unet.layers.1.blocks.0.mlp.drop          │ Dro… │    0 │ tra… │
+│ 59  │ net.swin_unet.layers.1.blocks.1                   │ Swi… │  446 │ tra… │
+│     │                                                   │      │    K │      │
+│ 60  │ net.swin_unet.layers.1.blocks.1.norm1             │ Lay… │  384 │ tra… │
+│ 61  │ net.swin_unet.layers.1.blocks.1.attn              │ Win… │  149 │ tra… │
+│     │                                                   │      │    K │      │
+│ 62  │ net.swin_unet.layers.1.blocks.1.attn.qkv          │ Lin… │  111 │ tra… │
+│     │                                                   │      │    K │      │
+│ 63  │ net.swin_unet.layers.1.blocks.1.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 64  │ net.swin_unet.layers.1.blocks.1.attn.proj         │ Lin… │ 37.1 │ tra… │
+│     │                                                   │      │    K │      │
+│ 65  │ net.swin_unet.layers.1.blocks.1.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 66  │ net.swin_unet.layers.1.blocks.1.attn.softmax      │ Sof… │    0 │ tra… │
+│ 67  │ net.swin_unet.layers.1.blocks.1.drop_path         │ Dro… │    0 │ tra… │
+│ 68  │ net.swin_unet.layers.1.blocks.1.norm2             │ Lay… │  384 │ tra… │
+│ 69  │ net.swin_unet.layers.1.blocks.1.mlp               │ Mlp  │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 70  │ net.swin_unet.layers.1.blocks.1.mlp.fc1           │ Lin… │  148 │ tra… │
+│     │                                                   │      │    K │      │
+│ 71  │ net.swin_unet.layers.1.blocks.1.mlp.act           │ GELU │    0 │ tra… │
+│ 72  │ net.swin_unet.layers.1.blocks.1.mlp.fc2           │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 73  │ net.swin_unet.layers.1.blocks.1.mlp.drop          │ Dro… │    0 │ tra… │
+│ 74  │ net.swin_unet.layers.1.downsample                 │ Pat… │  296 │ tra… │
+│     │                                                   │      │    K │      │
+│ 75  │ net.swin_unet.layers.1.downsample.reduction       │ Lin… │  294 │ tra… │
+│     │                                                   │      │    K │      │
+│ 76  │ net.swin_unet.layers.1.downsample.norm            │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 77  │ net.swin_unet.layers.2                            │ Bas… │  4.7 │ tra… │
+│     │                                                   │      │    M │      │
+│ 78  │ net.swin_unet.layers.2.blocks                     │ Mod… │  3.6 │ tra… │
+│     │                                                   │      │    M │      │
+│ 79  │ net.swin_unet.layers.2.blocks.0                   │ Swi… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 80  │ net.swin_unet.layers.2.blocks.0.norm1             │ Lay… │  768 │ tra… │
+│ 81  │ net.swin_unet.layers.2.blocks.0.attn              │ Win… │  594 │ tra… │
+│     │                                                   │      │    K │      │
+│ 82  │ net.swin_unet.layers.2.blocks.0.attn.qkv          │ Lin… │  443 │ tra… │
+│     │                                                   │      │    K │      │
+│ 83  │ net.swin_unet.layers.2.blocks.0.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 84  │ net.swin_unet.layers.2.blocks.0.attn.proj         │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 85  │ net.swin_unet.layers.2.blocks.0.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 86  │ net.swin_unet.layers.2.blocks.0.attn.softmax      │ Sof… │    0 │ tra… │
+│ 87  │ net.swin_unet.layers.2.blocks.0.drop_path         │ Dro… │    0 │ tra… │
+│ 88  │ net.swin_unet.layers.2.blocks.0.norm2             │ Lay… │  768 │ tra… │
+│ 89  │ net.swin_unet.layers.2.blocks.0.mlp               │ Mlp  │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 90  │ net.swin_unet.layers.2.blocks.0.mlp.fc1           │ Lin… │  591 │ tra… │
+│     │                                                   │      │    K │      │
+│ 91  │ net.swin_unet.layers.2.blocks.0.mlp.act           │ GELU │    0 │ tra… │
+│ 92  │ net.swin_unet.layers.2.blocks.0.mlp.fc2           │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 93  │ net.swin_unet.layers.2.blocks.0.mlp.drop          │ Dro… │    0 │ tra… │
+│ 94  │ net.swin_unet.layers.2.blocks.1                   │ Swi… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 95  │ net.swin_unet.layers.2.blocks.1.norm1             │ Lay… │  768 │ tra… │
+│ 96  │ net.swin_unet.layers.2.blocks.1.attn              │ Win… │  594 │ tra… │
+│     │                                                   │      │    K │      │
+│ 97  │ net.swin_unet.layers.2.blocks.1.attn.qkv          │ Lin… │  443 │ tra… │
+│     │                                                   │      │    K │      │
+│ 98  │ net.swin_unet.layers.2.blocks.1.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 99  │ net.swin_unet.layers.2.blocks.1.attn.proj         │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 100 │ net.swin_unet.layers.2.blocks.1.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 101 │ net.swin_unet.layers.2.blocks.1.attn.softmax      │ Sof… │    0 │ tra… │
+│ 102 │ net.swin_unet.layers.2.blocks.1.drop_path         │ Dro… │    0 │ tra… │
+│ 103 │ net.swin_unet.layers.2.blocks.1.norm2             │ Lay… │  768 │ tra… │
+│ 104 │ net.swin_unet.layers.2.blocks.1.mlp               │ Mlp  │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 105 │ net.swin_unet.layers.2.blocks.1.mlp.fc1           │ Lin… │  591 │ tra… │
+│     │                                                   │      │    K │      │
+│ 106 │ net.swin_unet.layers.2.blocks.1.mlp.act           │ GELU │    0 │ tra… │
+│ 107 │ net.swin_unet.layers.2.blocks.1.mlp.fc2           │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 108 │ net.swin_unet.layers.2.blocks.1.mlp.drop          │ Dro… │    0 │ tra… │
+│ 109 │ net.swin_unet.layers.2.downsample                 │ Pat… │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 110 │ net.swin_unet.layers.2.downsample.reduction       │ Lin… │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 111 │ net.swin_unet.layers.2.downsample.norm            │ Lay… │  3.1 │ tra… │
+│     │                                                   │      │    K │      │
+│ 112 │ net.swin_unet.layers.3                            │ Bas… │ 14.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 113 │ net.swin_unet.layers.3.blocks                     │ Mod… │ 14.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 114 │ net.swin_unet.layers.3.blocks.0                   │ Swi… │  7.1 │ tra… │
+│     │                                                   │      │    M │      │
+│ 115 │ net.swin_unet.layers.3.blocks.0.norm1             │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 116 │ net.swin_unet.layers.3.blocks.0.attn              │ Win… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 117 │ net.swin_unet.layers.3.blocks.0.attn.qkv          │ Lin… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 118 │ net.swin_unet.layers.3.blocks.0.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 119 │ net.swin_unet.layers.3.blocks.0.attn.proj         │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 120 │ net.swin_unet.layers.3.blocks.0.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 121 │ net.swin_unet.layers.3.blocks.0.attn.softmax      │ Sof… │    0 │ tra… │
+│ 122 │ net.swin_unet.layers.3.blocks.0.drop_path         │ Dro… │    0 │ tra… │
+│ 123 │ net.swin_unet.layers.3.blocks.0.norm2             │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 124 │ net.swin_unet.layers.3.blocks.0.mlp               │ Mlp  │  4.7 │ tra… │
+│     │                                                   │      │    M │      │
+│ 125 │ net.swin_unet.layers.3.blocks.0.mlp.fc1           │ Lin… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 126 │ net.swin_unet.layers.3.blocks.0.mlp.act           │ GELU │    0 │ tra… │
+│ 127 │ net.swin_unet.layers.3.blocks.0.mlp.fc2           │ Lin… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 128 │ net.swin_unet.layers.3.blocks.0.mlp.drop          │ Dro… │    0 │ tra… │
+│ 129 │ net.swin_unet.layers.3.blocks.1                   │ Swi… │  7.1 │ tra… │
+│     │                                                   │      │    M │      │
+│ 130 │ net.swin_unet.layers.3.blocks.1.norm1             │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 131 │ net.swin_unet.layers.3.blocks.1.attn              │ Win… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 132 │ net.swin_unet.layers.3.blocks.1.attn.qkv          │ Lin… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 133 │ net.swin_unet.layers.3.blocks.1.attn.attn_drop    │ Dro… │    0 │ tra… │
+│ 134 │ net.swin_unet.layers.3.blocks.1.attn.proj         │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 135 │ net.swin_unet.layers.3.blocks.1.attn.proj_drop    │ Dro… │    0 │ tra… │
+│ 136 │ net.swin_unet.layers.3.blocks.1.attn.softmax      │ Sof… │    0 │ tra… │
+│ 137 │ net.swin_unet.layers.3.blocks.1.drop_path         │ Dro… │    0 │ tra… │
+│ 138 │ net.swin_unet.layers.3.blocks.1.norm2             │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 139 │ net.swin_unet.layers.3.blocks.1.mlp               │ Mlp  │  4.7 │ tra… │
+│     │                                                   │      │    M │      │
+│ 140 │ net.swin_unet.layers.3.blocks.1.mlp.fc1           │ Lin… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 141 │ net.swin_unet.layers.3.blocks.1.mlp.act           │ GELU │    0 │ tra… │
+│ 142 │ net.swin_unet.layers.3.blocks.1.mlp.fc2           │ Lin… │  2.4 │ tra… │
+│     │                                                   │      │    M │      │
+│ 143 │ net.swin_unet.layers.3.blocks.1.mlp.drop          │ Dro… │    0 │ tra… │
+│ 144 │ net.swin_unet.layers_up                           │ Mod… │  6.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 145 │ net.swin_unet.layers_up.0                         │ Pat… │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 146 │ net.swin_unet.layers_up.0.expand                  │ Lin… │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 147 │ net.swin_unet.layers_up.0.norm                    │ Lay… │  768 │ tra… │
+│ 148 │ net.swin_unet.layers_up.1                         │ Bas… │  3.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 149 │ net.swin_unet.layers_up.1.blocks                  │ Mod… │  3.6 │ tra… │
+│     │                                                   │      │    M │      │
+│ 150 │ net.swin_unet.layers_up.1.blocks.0                │ Swi… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 151 │ net.swin_unet.layers_up.1.blocks.0.norm1          │ Lay… │  768 │ tra… │
+│ 152 │ net.swin_unet.layers_up.1.blocks.0.attn           │ Win… │  594 │ tra… │
+│     │                                                   │      │    K │      │
+│ 153 │ net.swin_unet.layers_up.1.blocks.0.attn.qkv       │ Lin… │  443 │ tra… │
+│     │                                                   │      │    K │      │
+│ 154 │ net.swin_unet.layers_up.1.blocks.0.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 155 │ net.swin_unet.layers_up.1.blocks.0.attn.proj      │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 156 │ net.swin_unet.layers_up.1.blocks.0.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 157 │ net.swin_unet.layers_up.1.blocks.0.attn.softmax   │ Sof… │    0 │ tra… │
+│ 158 │ net.swin_unet.layers_up.1.blocks.0.drop_path      │ Dro… │    0 │ tra… │
+│ 159 │ net.swin_unet.layers_up.1.blocks.0.norm2          │ Lay… │  768 │ tra… │
+│ 160 │ net.swin_unet.layers_up.1.blocks.0.mlp            │ Mlp  │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 161 │ net.swin_unet.layers_up.1.blocks.0.mlp.fc1        │ Lin… │  591 │ tra… │
+│     │                                                   │      │    K │      │
+│ 162 │ net.swin_unet.layers_up.1.blocks.0.mlp.act        │ GELU │    0 │ tra… │
+│ 163 │ net.swin_unet.layers_up.1.blocks.0.mlp.fc2        │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 164 │ net.swin_unet.layers_up.1.blocks.0.mlp.drop       │ Dro… │    0 │ tra… │
+│ 165 │ net.swin_unet.layers_up.1.blocks.1                │ Swi… │  1.8 │ tra… │
+│     │                                                   │      │    M │      │
+│ 166 │ net.swin_unet.layers_up.1.blocks.1.norm1          │ Lay… │  768 │ tra… │
+│ 167 │ net.swin_unet.layers_up.1.blocks.1.attn           │ Win… │  594 │ tra… │
+│     │                                                   │      │    K │      │
+│ 168 │ net.swin_unet.layers_up.1.blocks.1.attn.qkv       │ Lin… │  443 │ tra… │
+│     │                                                   │      │    K │      │
+│ 169 │ net.swin_unet.layers_up.1.blocks.1.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 170 │ net.swin_unet.layers_up.1.blocks.1.attn.proj      │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 171 │ net.swin_unet.layers_up.1.blocks.1.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 172 │ net.swin_unet.layers_up.1.blocks.1.attn.softmax   │ Sof… │    0 │ tra… │
+│ 173 │ net.swin_unet.layers_up.1.blocks.1.drop_path      │ Dro… │    0 │ tra… │
+│ 174 │ net.swin_unet.layers_up.1.blocks.1.norm2          │ Lay… │  768 │ tra… │
+│ 175 │ net.swin_unet.layers_up.1.blocks.1.mlp            │ Mlp  │  1.2 │ tra… │
+│     │                                                   │      │    M │      │
+│ 176 │ net.swin_unet.layers_up.1.blocks.1.mlp.fc1        │ Lin… │  591 │ tra… │
+│     │                                                   │      │    K │      │
+│ 177 │ net.swin_unet.layers_up.1.blocks.1.mlp.act        │ GELU │    0 │ tra… │
+│ 178 │ net.swin_unet.layers_up.1.blocks.1.mlp.fc2        │ Lin… │  590 │ tra… │
+│     │                                                   │      │    K │      │
+│ 179 │ net.swin_unet.layers_up.1.blocks.1.mlp.drop       │ Dro… │    0 │ tra… │
+│ 180 │ net.swin_unet.layers_up.1.upsample                │ Pat… │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 181 │ net.swin_unet.layers_up.1.upsample.expand         │ Lin… │  294 │ tra… │
+│     │                                                   │      │    K │      │
+│ 182 │ net.swin_unet.layers_up.1.upsample.norm           │ Lay… │  384 │ tra… │
+│ 183 │ net.swin_unet.layers_up.2                         │ Bas… │  966 │ tra… │
+│     │                                                   │      │    K │      │
+│ 184 │ net.swin_unet.layers_up.2.blocks                  │ Mod… │  892 │ tra… │
+│     │                                                   │      │    K │      │
+│ 185 │ net.swin_unet.layers_up.2.blocks.0                │ Swi… │  446 │ tra… │
+│     │                                                   │      │    K │      │
+│ 186 │ net.swin_unet.layers_up.2.blocks.0.norm1          │ Lay… │  384 │ tra… │
+│ 187 │ net.swin_unet.layers_up.2.blocks.0.attn           │ Win… │  149 │ tra… │
+│     │                                                   │      │    K │      │
+│ 188 │ net.swin_unet.layers_up.2.blocks.0.attn.qkv       │ Lin… │  111 │ tra… │
+│     │                                                   │      │    K │      │
+│ 189 │ net.swin_unet.layers_up.2.blocks.0.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 190 │ net.swin_unet.layers_up.2.blocks.0.attn.proj      │ Lin… │ 37.1 │ tra… │
+│     │                                                   │      │    K │      │
+│ 191 │ net.swin_unet.layers_up.2.blocks.0.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 192 │ net.swin_unet.layers_up.2.blocks.0.attn.softmax   │ Sof… │    0 │ tra… │
+│ 193 │ net.swin_unet.layers_up.2.blocks.0.drop_path      │ Dro… │    0 │ tra… │
+│ 194 │ net.swin_unet.layers_up.2.blocks.0.norm2          │ Lay… │  384 │ tra… │
+│ 195 │ net.swin_unet.layers_up.2.blocks.0.mlp            │ Mlp  │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 196 │ net.swin_unet.layers_up.2.blocks.0.mlp.fc1        │ Lin… │  148 │ tra… │
+│     │                                                   │      │    K │      │
+│ 197 │ net.swin_unet.layers_up.2.blocks.0.mlp.act        │ GELU │    0 │ tra… │
+│ 198 │ net.swin_unet.layers_up.2.blocks.0.mlp.fc2        │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 199 │ net.swin_unet.layers_up.2.blocks.0.mlp.drop       │ Dro… │    0 │ tra… │
+│ 200 │ net.swin_unet.layers_up.2.blocks.1                │ Swi… │  446 │ tra… │
+│     │                                                   │      │    K │      │
+│ 201 │ net.swin_unet.layers_up.2.blocks.1.norm1          │ Lay… │  384 │ tra… │
+│ 202 │ net.swin_unet.layers_up.2.blocks.1.attn           │ Win… │  149 │ tra… │
+│     │                                                   │      │    K │      │
+│ 203 │ net.swin_unet.layers_up.2.blocks.1.attn.qkv       │ Lin… │  111 │ tra… │
+│     │                                                   │      │    K │      │
+│ 204 │ net.swin_unet.layers_up.2.blocks.1.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 205 │ net.swin_unet.layers_up.2.blocks.1.attn.proj      │ Lin… │ 37.1 │ tra… │
+│     │                                                   │      │    K │      │
+│ 206 │ net.swin_unet.layers_up.2.blocks.1.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 207 │ net.swin_unet.layers_up.2.blocks.1.attn.softmax   │ Sof… │    0 │ tra… │
+│ 208 │ net.swin_unet.layers_up.2.blocks.1.drop_path      │ Dro… │    0 │ tra… │
+│ 209 │ net.swin_unet.layers_up.2.blocks.1.norm2          │ Lay… │  384 │ tra… │
+│ 210 │ net.swin_unet.layers_up.2.blocks.1.mlp            │ Mlp  │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 211 │ net.swin_unet.layers_up.2.blocks.1.mlp.fc1        │ Lin… │  148 │ tra… │
+│     │                                                   │      │    K │      │
+│ 212 │ net.swin_unet.layers_up.2.blocks.1.mlp.act        │ GELU │    0 │ tra… │
+│ 213 │ net.swin_unet.layers_up.2.blocks.1.mlp.fc2        │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 214 │ net.swin_unet.layers_up.2.blocks.1.mlp.drop       │ Dro… │    0 │ tra… │
+│ 215 │ net.swin_unet.layers_up.2.upsample                │ Pat… │ 73.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 216 │ net.swin_unet.layers_up.2.upsample.expand         │ Lin… │ 73.7 │ tra… │
+│     │                                                   │      │    K │      │
+│ 217 │ net.swin_unet.layers_up.2.upsample.norm           │ Lay… │  192 │ tra… │
+│ 218 │ net.swin_unet.layers_up.3                         │ Bas… │  225 │ tra… │
+│     │                                                   │      │    K │      │
+│ 219 │ net.swin_unet.layers_up.3.blocks                  │ Mod… │  225 │ tra… │
+│     │                                                   │      │    K │      │
+│ 220 │ net.swin_unet.layers_up.3.blocks.0                │ Swi… │  112 │ tra… │
+│     │                                                   │      │    K │      │
+│ 221 │ net.swin_unet.layers_up.3.blocks.0.norm1          │ Lay… │  192 │ tra… │
+│ 222 │ net.swin_unet.layers_up.3.blocks.0.attn           │ Win… │ 37.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 223 │ net.swin_unet.layers_up.3.blocks.0.attn.qkv       │ Lin… │ 27.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 224 │ net.swin_unet.layers_up.3.blocks.0.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 225 │ net.swin_unet.layers_up.3.blocks.0.attn.proj      │ Lin… │  9.3 │ tra… │
+│     │                                                   │      │    K │      │
+│ 226 │ net.swin_unet.layers_up.3.blocks.0.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 227 │ net.swin_unet.layers_up.3.blocks.0.attn.softmax   │ Sof… │    0 │ tra… │
+│ 228 │ net.swin_unet.layers_up.3.blocks.0.drop_path      │ Ide… │    0 │ tra… │
+│ 229 │ net.swin_unet.layers_up.3.blocks.0.norm2          │ Lay… │  192 │ tra… │
+│ 230 │ net.swin_unet.layers_up.3.blocks.0.mlp            │ Mlp  │ 74.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 231 │ net.swin_unet.layers_up.3.blocks.0.mlp.fc1        │ Lin… │ 37.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 232 │ net.swin_unet.layers_up.3.blocks.0.mlp.act        │ GELU │    0 │ tra… │
+│ 233 │ net.swin_unet.layers_up.3.blocks.0.mlp.fc2        │ Lin… │ 37.0 │ tra… │
+│     │                                                   │      │    K │      │
+│ 234 │ net.swin_unet.layers_up.3.blocks.0.mlp.drop       │ Dro… │    0 │ tra… │
+│ 235 │ net.swin_unet.layers_up.3.blocks.1                │ Swi… │  112 │ tra… │
+│     │                                                   │      │    K │      │
+│ 236 │ net.swin_unet.layers_up.3.blocks.1.norm1          │ Lay… │  192 │ tra… │
+│ 237 │ net.swin_unet.layers_up.3.blocks.1.attn           │ Win… │ 37.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 238 │ net.swin_unet.layers_up.3.blocks.1.attn.qkv       │ Lin… │ 27.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 239 │ net.swin_unet.layers_up.3.blocks.1.attn.attn_drop │ Dro… │    0 │ tra… │
+│ 240 │ net.swin_unet.layers_up.3.blocks.1.attn.proj      │ Lin… │  9.3 │ tra… │
+│     │                                                   │      │    K │      │
+│ 241 │ net.swin_unet.layers_up.3.blocks.1.attn.proj_drop │ Dro… │    0 │ tra… │
+│ 242 │ net.swin_unet.layers_up.3.blocks.1.attn.softmax   │ Sof… │    0 │ tra… │
+│ 243 │ net.swin_unet.layers_up.3.blocks.1.drop_path      │ Dro… │    0 │ tra… │
+│ 244 │ net.swin_unet.layers_up.3.blocks.1.norm2          │ Lay… │  192 │ tra… │
+│ 245 │ net.swin_unet.layers_up.3.blocks.1.mlp            │ Mlp  │ 74.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 246 │ net.swin_unet.layers_up.3.blocks.1.mlp.fc1        │ Lin… │ 37.2 │ tra… │
+│     │                                                   │      │    K │      │
+│ 247 │ net.swin_unet.layers_up.3.blocks.1.mlp.act        │ GELU │    0 │ tra… │
+│ 248 │ net.swin_unet.layers_up.3.blocks.1.mlp.fc2        │ Lin… │ 37.0 │ tra… │
+│     │                                                   │      │    K │      │
+│ 249 │ net.swin_unet.layers_up.3.blocks.1.mlp.drop       │ Dro… │    0 │ tra… │
+│ 250 │ net.swin_unet.concat_back_dim                     │ Mod… │  387 │ tra… │
+│     │                                                   │      │    K │      │
+│ 251 │ net.swin_unet.concat_back_dim.0                   │ Ide… │    0 │ tra… │
+│ 252 │ net.swin_unet.concat_back_dim.1                   │ Lin… │  295 │ tra… │
+│     │                                                   │      │    K │      │
+│ 253 │ net.swin_unet.concat_back_dim.2                   │ Lin… │ 73.9 │ tra… │
+│     │                                                   │      │    K │      │
+│ 254 │ net.swin_unet.concat_back_dim.3                   │ Lin… │ 18.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 255 │ net.swin_unet.norm                                │ Lay… │  1.5 │ tra… │
+│     │                                                   │      │    K │      │
+│ 256 │ net.swin_unet.norm_up                             │ Lay… │  192 │ tra… │
+│ 257 │ net.swin_unet.up                                  │ Fin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 258 │ net.swin_unet.up.expand                           │ Lin… │  147 │ tra… │
+│     │                                                   │      │    K │      │
+│ 259 │ net.swin_unet.up.norm                             │ Lay… │  192 │ tra… │
+│ 260 │ net.swin_unet.output                              │ Con… │   96 │ tra… │
+└─────┴───────────────────────────────────────────────────┴──────┴──────┴──────┘
+Trainable params: 27.2 M                                                        
+Non-trainable params: 0                                                         
+Total params: 27.2 M                                                            
+Total estimated model params size (MB): 108                                     
+Modules in train mode: 261                                                      
+Modules in eval mode: 0                                                         
+[rank: 0] Received SIGTERM: 15
+Epoch 0/99                      12/56359 0:00:08 • 9:56:22 1.57it/s v_num: 0.000
