@@ -4,6 +4,7 @@ import pytorch_lightning as pl
 import arch
 import cv2
 import numpy as np
+import torchvision
 from torchvision import transforms
 from pytorch_lightning import LightningModule
 
@@ -56,10 +57,10 @@ model=load_checkpoint_from_yaml(
     '/home/vndata/trung/Swin_UnetFFHQ/source/config/SwinUnet.yaml',
     '/home/vndata/trung/Swin_UnetFFHQ/source/checkpoint/SwinUnet/checkpoints/epoch_029.ckpt'
     )
-img=cv2.imread('/home/vndata/trung/ffhq-dataset/images1024x1024/04000/04000.png')
+img=torchvision.io.read_image('/home/vndata/trung/ffhq-dataset/images1024x1024/04000/04000.png')
 img_not_resize=img
-img =cv2.resize(img,(256,256))
-
+resize=torchvision.transforms.Resize((256,256))
+img_resize=resize(img)
 
 mask=cv2.imread('/home/vndata/testing_mask_dataset/00004.png',cv2.IMREAD_GRAYSCALE)
 mask=cv2.bitwise_not(mask)
@@ -71,21 +72,22 @@ print(mask)
 mean,std=np.load('/home/vndata/trung/ffhq-dataset/images1024x1024/mean.npz'),np.load('/home/vndata/trung/ffhq-dataset/images1024x1024/std.npz')
 transform=transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean['arr_0'],std['arr_0']
-                             )
+        transforms.Normalize(mean['arr_0'],std['arr_0'])
     ])
-# img=transform(img)
 transform_img = transforms.ToPILImage()
 to_tensor=transforms.Compose([
         transforms.ToTensor()])
-img=to_tensor(img)
 img_bf_mask=transform_img(img)
 img_not_resize=transform_img(img_not_resize)
 img_not_resize.save('/home/vndata/trung/Swin_UnetFFHQ/source/resize.png')
 img_bf_mask.save('/home/vndata/trung/Swin_UnetFFHQ/source/input_bf_mask.jpg')
 mask= to_tensor(mask)
-img_masked=img*mask
+img_masked=img_resize*mask
+img_masked=img_masked.to(torch.uint8)
+print(img_masked.shape)
+print(img_masked)
 img_masked=transform_img(img_masked)
+
 img_masked.save('/home/vndata/trung/Swin_UnetFFHQ/source/input.jpg')
 img_masked=img_masked.unsqueeze(0)
 with torch.no_grad():

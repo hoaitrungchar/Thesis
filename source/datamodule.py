@@ -6,6 +6,7 @@ import pandas as pd
 import random
 import os
 from torchvision import transforms  
+import torchvision
 from typing import Tuple, Dict, List
 import cv2
 from generate_mask import create_mask
@@ -61,7 +62,8 @@ class DatasetReader(Dataset):
                 self.list_image=list_image_path[int(0.7*num_img):int(0.8*num_img-1)]
         self.transform=transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize(self.mean['arr_0'],self.std['arr_0'])
+            transforms.Normalize(self.mean['arr_0'],self.std['arr_0']),
+            torchvision.transforms.Resize((256,256))
         ])
         if self.type_dataset == "test":
             list_img=os.listdir(self.mask_path_test)
@@ -76,8 +78,7 @@ class DatasetReader(Dataset):
         return len(self.list_image)
     
     def __getitem__(self, index:int) -> Tuple[torch.tensor, torch.tensor]:
-        img=cv2.imread(self.list_image[index])
-        img =cv2.resize(img,(256,256))
+        img=torchvision.io.read_image(self.list_image[index])
         if self.type_dataset == "test":
             n=random.randint(0, self.num_mask_image-1)
             mask=cv2.imread(self.list_mask_image[n],cv2.IMREAD_GRAYSCALE)
@@ -88,7 +89,7 @@ class DatasetReader(Dataset):
         mask=mask/255
         mask= np.where(mask<0.5, 0, 1)
 
-        
+
         # img_masked=cv2.bitwise_and(img,img,mask=mask)
         img=self.transform(img)
         # img_masked=self.transform(img_masked)
