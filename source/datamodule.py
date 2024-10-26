@@ -14,13 +14,13 @@ class DatasetReader(Dataset):
     def __init__(self,
                 name_dataset: str,
                 type_dataset: str,
-                mask_path_val: str,
+                mask_path_test: str,
                 path: str):
         
         self.name_dataset=name_dataset
         self.type_dataset=type_dataset
         self.path=path
-        self.mask_path_val=mask_path_val
+        self.mask_path_test=mask_path_test
         self.mean=np.load(os.path.join(self.path,"mean.npz"))
         self.std=np.load(os.path.join(self.path,"std.npz"))
         if self.name_dataset =="Places2":
@@ -42,13 +42,30 @@ class DatasetReader(Dataset):
                                 for image in os.listdir(z):
                                     image=os.path.join(z,image)
                                     self.list_image.append(image)
+        elif self.name_dataset=="FFHQ":
+            list_folder_path=list(map(lambda x: os.path.join(path,x),os.listdir(path)))
+            list_image_path=[]
+            print(list_folder_path)
+            for folder in list_folder_path:
+                print(folder)
+                if not os.path.isdir(folder):
+                    continue
+                list_image_path+=list(map(lambda x: os.path.join(folder,x),os.listdir(folder)))
+            num_img=len(list_image_path)
+            print(num_img)
+            if type_dataset=="train":
+                self.list_image=list_image_path[0:int(0.7*num_img -1)]
+            elif type_dataset=="test":
+                self.list_image=list_image_path[int(0.7*num_img):-1]
+            elif type_dataset =="val":
+                self.list_image=list_image_path[int(0.7*num_img):int(0.8*num_img-1)]
         self.transform=transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize(self.mean['arr_0'],self.std['arr_0'])
         ])
-        if self.type_dataset == "val":
-            list_img=os.listdir(self.mask_path_val)
-            self.list_mask_image=list(map(lambda x: os.path.join(self.mask_path_val,x),list_img))
+        if self.type_dataset == "test":
+            list_img=os.listdir(self.mask_path_test)
+            self.list_mask_image=list(map(lambda x: os.path.join(self.mask_path_test,x),list_img))
             self.num_mask_image=len(self.list_mask_image)
         # print(self.type_dataset,self.list_image[0])
 
@@ -60,27 +77,25 @@ class DatasetReader(Dataset):
     
     def __getitem__(self, index:int) -> Tuple[torch.tensor, torch.tensor]:
         img=cv2.imread(self.list_image[index])
-        if self.type_dataset == "val":
+        img =cv2.resize(img,(256,256))
+        if self.type_dataset == "test":
             n=random.randint(0, self.num_mask_image-1)
             mask=cv2.imread(self.list_mask_image[n],cv2.IMREAD_GRAYSCALE)
-            # print(self.list_mask_image[n])
         else:
             mask=create_mask()
         mask=cv2.bitwise_not(mask)
         mask = cv2.resize(mask, (256, 256))
+        mask=mask/255
+        mask= np.where(mask<0.5, 0, 1)
+
         
-        try:
-            a=img.shape
-        except:
-            print("abcdsdadad",self.list_image[index], "vfvfvf" ,flush=True)
-        # print(img.shape,flush=True)
-        # print(mask.shape, img.shape, type(mask), type(img),flush=True)
-        img_masked=cv2.bitwise_and(img,img,mask=mask)
+        # img_masked=cv2.bitwise_and(img,img,mask=mask)
         img=self.transform(img)
-        img_masked=self.transform(img_masked)
+        # img_masked=self.transform(img_masked)
         to_tensor=transforms.Compose([
             transforms.ToTensor()])
-        mask= to_tensor(mask/255)
+        mask= to_tensor(mask)
+        img_masked=img*mask
         return img_masked, mask, img
 
     
@@ -88,7 +103,7 @@ class DataModule(LightningDataModule):
     def __init__(self,
                  name_dataset:str,
                  path:str,
-                 mask_path_val:str,
+                 mask_path_test:str,
                 batch_size:int ,
                 num_workers:int ,
                 pin_memory: bool ,
@@ -96,7 +111,7 @@ class DataModule(LightningDataModule):
         super().__init__()
         self.hparams.path = path
         self.hparams.name_dataset=name_dataset
-        self.hparams.mask_path_val=mask_path_val
+        self.hparams.mask_path_test=mask_path_test
         self.hparams.batch_size=batch_size
         self.hparams.num_workers=num_workers
         self.hparams.pin_memory=pin_memory
@@ -108,14 +123,14 @@ class DataModule(LightningDataModule):
         self.train_data = DatasetReader(
             name_dataset=self.hparams.name_dataset,
             type_dataset="train",
-            mask_path_val=self.hparams.mask_path_val,
+            mask_path_test=self.hparams.mask_path_test,
             path=self.hparams.path
         )
 
         self.test_data= DatasetReader(
             name_dataset=self.hparams.name_dataset,
             type_dataset="test",
-            mask_path_val=self.hparams.mask_path_val,
+            mask_path_test=self.hparams.mask_path_test,
             path=self.hparams.path
 
         )
@@ -123,7 +138,7 @@ class DataModule(LightningDataModule):
         self.val_data= DatasetReader(
             name_dataset=self.hparams.name_dataset,
             type_dataset="val",
-            mask_path_val=self.hparams.mask_path_val,
+            mask_path_test=self.hparams.mask_path_test,
             path=self.hparams.path
         )
 

@@ -20,8 +20,14 @@ def get_list_image(name_dataset,path):
                         for image in os.listdir(z):
                             image=os.path.join(z,image)
                             list_image.append(image)
-    else:
-        pass
+    elif name_dataset=="FFHQ":
+        list_folder_path=list(map(lambda x: os.path.join(path,x),os.listdir(path)))
+        list_image_path=[]
+        for folder in list_folder_path:
+            list_image_path+=list(map(lambda x: os.path.join(folder,x),os.listdir(folder)))
+        num_img=len(list_image_path)
+        print(num_img)
+        list_image=list_image_path[0:int(0.7*num_img -1)]
 
     return list_image
 
@@ -35,8 +41,7 @@ if __name__=='__main__':
     sum_pixels = np.zeros(3, dtype=np.float64)
     sum_squared_pixels = np.zeros(3, dtype=np.float64)
     for i, x in enumerate(list_image):
-        if i % 10000 == 0:
-            print(f"Processing image {i}", flush=True)
+        print(f"Processing image {i}", flush=True)
         image = cv2.imread(x)
         if image is None:
             print(f"Failed to read image: {x}")

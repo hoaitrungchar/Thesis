@@ -40,7 +40,7 @@ trainer:
     init_args:
       monitor: val/mse
       min_delta: 0.0
-      patience: 20
+      patience: 10
       verbose: false
       mode: min
       strict: true
@@ -143,9 +143,9 @@ model:
   weight_decay: 1.0e-05
 data:
   name_dataset: Places2
-  path: /dev/shm/Places2
-  mask_path_val: /dev/shm/test_mask_dataset
-  batch_size: 32
+  path: /home/vndata/Places2
+  mask_path_test: /home/vndata/testing_mask_dataset
+  batch_size: 16
   num_workers: 8
   pin_memory: false
 optimizer: null

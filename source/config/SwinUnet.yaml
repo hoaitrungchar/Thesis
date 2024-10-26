@@ -40,7 +40,7 @@ trainer:
       init_args:
         monitor: "val/mse" # name of the logged metric which determines when model is improving
         mode: "min" # "max" means higher metric value is better, can be also "min"
-        patience: 20 # how many validation epochs of not improving until training stops
+        patience: 10 # how many validation epochs of not improving until training stops
         min_delta: 0. # minimum change in the monitored metric needed to qualify as an improvement
 
     - class_path: pytorch_lightning.callbacks.RichModelSummary
@@ -56,6 +56,7 @@ model:
   beta_2: 0.99
   lr: 5e-4
   weight_decay: 1e-5
+  
   net:
     patch_size: 4
     num_classes: 1        
@@ -63,7 +64,7 @@ model:
     depths: [2,2,2,2]        
     depths_decoder: [1, 2, 2, 2]
     num_heads: [3, 6, 12, 24]
-    window_size: 8
+    window_size: 4
     qkv_bias: True
     in_chans: 3
     qk_scale: null
@@ -77,9 +78,9 @@ model:
 
 # ---------------------------- DATA -------------------------------------------
 data:
-  path: "/dev/shm/Places2"
-  mask_path_val: "/dev/shm/test_mask_dataset"
-  name_dataset: "Places2"
-  batch_size: 32
+  path: "/home/vndata/trung/ffhq-dataset/images1024x1024/home/vndata/trung/Swin_UnetFFHQ/source"
+  mask_path_test: "/home/vndata/testing_mask_dataset"
+  name_dataset: "FFHQ"
+  batch_size: 64
   num_workers: 8
   pin_memory: False

@@ -33,7 +33,7 @@ class MaskedPredictModule(LightningModule):
         # print(groudtruth.shape)
         predicted= self.net(input)
         mse_loss=F.mse_loss(masked,predicted)
-        self.log("training loss", mse_loss)
+        self.log("train/mse", mse_loss)
         return mse_loss.float()
 
 
@@ -44,7 +44,7 @@ class MaskedPredictModule(LightningModule):
         groundtruth=groudtruth.float()
         predicted= self.net(input)
         mse_loss=F.mse_loss(masked,predicted)
-        self.log("test loss", mse_loss)
+        self.log("test/mse", mse_loss)
         return mse_loss.float()
 
         
@@ -55,7 +55,7 @@ class MaskedPredictModule(LightningModule):
         groundtruth=groudtruth.float()
         predicted= self.net(input)
         mse_loss=F.mse_loss(masked,predicted)
-        self.log("validating loss", mse_loss)
+        self.log("val/mse", mse_loss)
         return mse_loss
 
     def configure_optimizers(self):
