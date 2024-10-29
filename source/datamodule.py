@@ -22,8 +22,6 @@ class DatasetReader(Dataset):
         self.type_dataset=type_dataset
         self.path=path
         self.mask_path_test=mask_path_test
-        self.mean=np.load(os.path.join(self.path,"mean.npz"))
-        self.std=np.load(os.path.join(self.path,"std.npz"))
         if self.name_dataset =="Places2":
             path=os.path.join(path,self.type_dataset)
             if self.type_dataset in ['test', 'val']:
@@ -61,8 +59,8 @@ class DatasetReader(Dataset):
             elif type_dataset =="val":
                 self.list_image=list_image_path[int(0.7*num_img):int(0.8*num_img-1)]
         self.transform=transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(self.mean['arr_0'],self.std['arr_0']),
+
+            transforms.Normalize([0.5]*3,[0.5]*3),
             torchvision.transforms.Resize((256,256))
         ])
         if self.type_dataset == "test":
@@ -89,10 +87,8 @@ class DatasetReader(Dataset):
         mask=mask/255
         mask= np.where(mask<0.5, 0, 1)
 
-
-        # img_masked=cv2.bitwise_and(img,img,mask=mask)
+        img = img.float()
         img=self.transform(img)
-        # img_masked=self.transform(img_masked)
         to_tensor=transforms.Compose([
             transforms.ToTensor()])
         mask= to_tensor(mask)

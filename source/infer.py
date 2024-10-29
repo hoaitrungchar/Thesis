@@ -7,7 +7,7 @@ import numpy as np
 import torchvision
 from torchvision import transforms
 from pytorch_lightning import LightningModule
-
+from PIL import Image
 class MaskedPredictModule(LightningModule):
     def __init__(self, 
                  net: arch.SwinUnet
@@ -54,13 +54,11 @@ def load_checkpoint_from_yaml(config_path, checkpoint_path):
 
 
 model=load_checkpoint_from_yaml(
-    '/home/vndata/trung/Swin_UnetFFHQ/source/config/SwinUnet.yaml',
-    '/home/vndata/trung/Swin_UnetFFHQ/source/checkpoint/SwinUnet/checkpoints/epoch_029.ckpt'
+    '/home/vndata/trung/Swin_Unet/source/config/SwinUnet.yaml',
+    '/home/vndata/trung/Swin_Unet/source/checkpoint/SwinUnet/checkpoints/epoch_038.ckpt'
     )
 img=torchvision.io.read_image('/home/vndata/trung/ffhq-dataset/images1024x1024/04000/04000.png')
-img_not_resize=img
-resize=torchvision.transforms.Resize((256,256))
-img_resize=resize(img)
+
 
 mask=cv2.imread('/home/vndata/testing_mask_dataset/00004.png',cv2.IMREAD_GRAYSCALE)
 mask=cv2.bitwise_not(mask)
@@ -71,31 +69,30 @@ mask= np.where(mask<0.5, 0, 1)
 print(mask)
 mean,std=np.load('/home/vndata/trung/ffhq-dataset/images1024x1024/mean.npz'),np.load('/home/vndata/trung/ffhq-dataset/images1024x1024/std.npz')
 transform=transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean['arr_0'],std['arr_0'])
+        transforms.Normalize([0.5]*3,[0.5]*3),
+        torchvision.transforms.Resize((256,256))
     ])
 transform_img = transforms.ToPILImage()
 to_tensor=transforms.Compose([
         transforms.ToTensor()])
-img_bf_mask=transform_img(img)
-img_not_resize=transform_img(img_not_resize)
-img_not_resize.save('/home/vndata/trung/Swin_UnetFFHQ/source/resize.png')
-img_bf_mask.save('/home/vndata/trung/Swin_UnetFFHQ/source/input_bf_mask.jpg')
-mask= to_tensor(mask)
-img_masked=img_resize*mask
-img_masked=img_masked.to(torch.uint8)
-print(img_masked.shape)
-print(img_masked)
-img_masked=transform_img(img_masked)
+img=img.float()
+img=transform(img)
+mask=to_tensor(mask)
 
-img_masked.save('/home/vndata/trung/Swin_UnetFFHQ/source/input.jpg')
+img_masked=img*mask
+img_masked_save=transform_img(img_masked)
+
+img_masked_save.save('/home/vndata/trung/Swin_Unet/source/input_masked.jpg')
 img_masked=img_masked.unsqueeze(0)
 with torch.no_grad():
     predict=model.net(img_masked)
-
+print(predict)
+predict=torch.sigmoid(predict)
 predict=predict*255
 predict=predict.squeeze(0)
-result_img=transform_img(predict)
+predict = predict.repeat(3, 1, 1)
+img_pred = predict.permute(1, 2, 0).detach().cpu().numpy()
+result_img = Image.fromarray((img_pred).astype(np.uint8))
 
 print('predicted_image')
-result_img.save('/home/vndata/trung/Swin_UnetFFHQ/source/abcdefgh.jpg')
+result_img.save('/home/vndata/trung/Swin_Unet/source/abcdefgh.jpg')
