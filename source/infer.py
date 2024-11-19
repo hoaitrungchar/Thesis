@@ -1,7 +1,7 @@
 import yaml
 import torch
 import pytorch_lightning as pl
-import arch
+import trung.Thesis.source.net.SwinUnet as SwinUnet
 import cv2
 import numpy as np
 import torchvision
@@ -10,7 +10,7 @@ from pytorch_lightning import LightningModule
 from PIL import Image
 class MaskedPredictModule(LightningModule):
     def __init__(self, 
-                 net: arch.SwinUnet
+                 net: SwinUnet.SwinUnet
                 ):
         super().__init__()
         self.net = net
@@ -28,7 +28,7 @@ def load_checkpoint_from_yaml(config_path, checkpoint_path):
     dict=config.get('model')['net']
     
     checkpoint = torch.load(checkpoint_path)
-    net=arch.SwinUnet(
+    net=SwinUnet.SwinUnet(
         config='',
         patch_size=dict['patch_size'],
         num_classes=dict['num_classes'],

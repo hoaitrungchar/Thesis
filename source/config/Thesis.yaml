@@ -2,12 +2,12 @@ seed_everything: 42
 
 # ---------------------------- TRAINER -------------------------------------------
 trainer:
-  default_root_dir: "checkpoint/SwinUnet"
+  default_root_dir: "checkpoint/DiffInpant"
   min_epochs: 1
   max_epochs: 100
   precision: 16-mixed
   accelerator: cuda
-  # limit_train_batches: 10
+  limit_train_batches: 10
   num_nodes: 1
   enable_progress_bar: true
   sync_batchnorm: True
@@ -16,9 +16,10 @@ trainer:
   logger:
     class_path: pytorch_lightning.loggers.CSVLogger
     init_args:
-      save_dir: "checkpoint/SwinUnet/logs"
+      save_dir: "checkpoint/DiffInpant/logs"
       name: null
       version: null
+      prefix: ""
 
   callbacks:
     - class_path: pytorch_lightning.callbacks.LearningRateMonitor
@@ -27,8 +28,8 @@ trainer:
 
     - class_path: pytorch_lightning.callbacks.ModelCheckpoint
       init_args:
-        dirpath: "checkpoint/SwinUnet/checkpoints"
-        monitor: "val/mse" # name of the logged metric which determines when model is improving
+        dirpath: "checkpoint/DiffInpant/checkpoints"
+        monitor: "val/loss" # name of the logged metric which determines when model is improving
         mode: "min" # "max" means higher metric value is better, can be also "min"
         save_top_k: 1 # save k best models (determined by above metric)
         save_last: True # additionally always save model from last epoch
@@ -38,7 +39,7 @@ trainer:
 
     - class_path: pytorch_lightning.callbacks.EarlyStopping
       init_args:
-        monitor: "val/mse" # name of the logged metric which determines when model is improving
+        monitor: "val/loss" # name of the logged metric which determines when model is improving
         mode: "min" # "max" means higher metric value is better, can be also "min"
         patience: 10 # how many validation epochs of not improving until training stops
         min_delta: 0. # minimum change in the monitored metric needed to qualify as an improvement
@@ -56,31 +57,50 @@ model:
   beta_2: 0.99
   lr: 5e-4
   weight_decay: 1e-5
-  
+  learn_sigma: False
+  sigma_small: False
+  noise_schedule: "linear"
+  use_kl: False
+  predict_xstart: False
+  rescale_timesteps: False
+  rescale_learned_sigmas: False
+  timestep_respacing: ""
+
+  net_init_mask:
+    in_channels: 3
+    out_channels: 1
+  net_init_prior:
+    in_channels: 3
+    out_channels: 1
   net:
-    patch_size: 4
-    num_classes: 1        
-    embed_dim: 96      
-    depths: [2,2,2,2]        
-    depths_decoder: [1, 2, 2, 2]
-    num_heads: [3, 6, 12, 24]
-    window_size: 4
-    qkv_bias: True
-    in_chans: 3
-    qk_scale: null
-    drop_rate: 0.
-    drop_path_rate: 0.1
-    ape: False
-    patch_norm: True
-    use_checkpoint: False
-    
+    image_size: 256
+    in_channels: 5
+    model_channels: 32
+    out_channels: 1
+    num_res_blocks: [1, 2, 2, 2, 2, 3, 4]
+    attention_resolutions: [32, 16, 8]
+    dropout: 0
+    channel_mult: [1, 2, 4, 8, 8, 16, 16]
+    conv_resample: True
+    dims: 2
+    num_classes: null 
+    use_fp16: False
+    num_heads: 1
+    num_head_channels: 64
+    use_scale_shift_norm: True
+    resblock_updown: False
+    use_new_attention_order: False
+
+
+
 
 
 # ---------------------------- DATA -------------------------------------------
 data:
-  path: "/home/vndata/trung/ffhq-dataset/images1024x1024/home/vndata/trung/Swin_UnetFFHQ/source"
+  path: "/home/vndata/trung/ffhq-dataset/images1024x1024"
   mask_path_test: "/home/vndata/testing_mask_dataset"
   name_dataset: "FFHQ"
-  batch_size: 64
-  num_workers: 8
+  prior: 'canny'
+  batch_size: 6
+  num_workers: 16
   pin_memory: False
