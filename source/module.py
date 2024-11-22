@@ -175,9 +175,11 @@ class DenoisedModule(LightningModule):
         indicies, weight=self.sampler.sample(B)
         term = self.training_method.training_losses(self.net, input ,indicies)
         loss = term['loss'].mean()
-        prior_loss= self.bce_loss(term['mask'],masked)
-        mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("train/loss", loss+prior_loss+mask_loss)
+        prior_loss= self.bce_loss(term['prior'],prior)
+        mask_loss= self.bce_loss(term['mask'],masked)
+        total_loss = loss+prior_loss+mask_loss
+
+        self.log("train/loss", total_loss)
         return loss +prior_loss +mask_loss
 
 
@@ -193,8 +195,9 @@ class DenoisedModule(LightningModule):
         indicies, weight=self.sampler.sample(B)
         term = self.training_method.training_losses(self.net, input ,indicies)
         loss = term['loss'].mean()
-        prior_loss= self.bce_loss(term['mask'],masked)
-        mask_loss= self.bce_loss(term['prior'],prior)
+        prior_loss= self.bce_loss(term['prior'],prior)
+        mask_loss= self.bce_loss(term['mask'],masked)
+        
         self.log("test/loss", loss+prior_loss+mask_loss)
         return loss +prior_loss +mask_loss
         
@@ -210,16 +213,13 @@ class DenoisedModule(LightningModule):
         indicies, weight=self.sampler.sample(B)
         term = self.training_method.training_losses(self.net, input ,indicies)
         loss = term['loss'].mean()
-        prior_loss= self.bce_loss(term['mask'],masked)
-        mask_loss= self.bce_loss(term['prior'],prior)
-        print(loss.shape)
-        print(prior_loss.shape)
-        print(mask_loss.shape)
+        prior_loss= self.bce_loss(term['prior'],prior)
+        mask_loss= self.bce_loss(term['mask'],masked)
         self.log("val/loss", loss+prior_loss+mask_loss)
         return loss +prior_loss +mask_loss
     
     def configure_optimizers(self):
-       return torch.optim.Adam(self.parameters(), 
+        return torch.optim.Adam(self.parameters(), 
                                lr=self.hparams.lr,
                                betas=[self.hparams.beta_1,self.hparams.beta_2],
                                weight_decay=self.hparams.weight_decay

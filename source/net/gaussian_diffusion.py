@@ -605,6 +605,11 @@ class GaussianDiffusion:
             )
             yield out
             img = out["sample"]
+            mask = out['mask']
+            mask= th.sigmoid(mask)
+            prior = out['prior']
+            prior =th.sigmoid(prior)
+            img = th.cat((img,mask.prior), dim=1)
 
     def _vb_terms_bpd(
         self, model, x_start, x_t, t, clip_denoised=True, model_kwargs=None
@@ -710,6 +715,7 @@ class GaussianDiffusion:
             terms["mse"] = mean_flat((target - model_output) ** 2)
             terms['mask'] = mask
             terms['prior'] = prior
+            terms['output'] = model_output
             if "vb" in terms:
                 terms["loss"] = terms["mse"] + terms["vb"]
             else:

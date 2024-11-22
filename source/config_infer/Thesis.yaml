@@ -96,7 +96,7 @@ model:
 
 # ---------------------------- DATA -------------------------------------------
 data:
-  path: "/home/vndata/trung/ffhq-dataset/images1024x1024"
+  path: "/home/vndata/trung/infer_image"
   mask_path_test: "/home/vndata/testing_mask_dataset"
   name_dataset: "FFHQ"
   prior: 'canny'
