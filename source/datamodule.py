@@ -53,6 +53,12 @@ class DatasetReader(Dataset):
                     continue
                 list_image_path+=list(map(lambda x: os.path.join(folder,x),os.listdir(folder)))
             num_img=len(list_image_path)
+            if type_dataset=="train":
+                self.list_image=list_image_path[0:int(0.7*num_img -1)]
+            elif type_dataset=="test":
+                self.list_image=list_image_path[int(0.7*num_img):-1]
+            elif type_dataset =="val":
+                self.list_image=list_image_path[int(0.7*num_img):int(0.8*num_img-1)]
         self.transform=transforms.Compose([
 
             transforms.Normalize([0.5]*3,[0.5]*3),
@@ -85,6 +91,7 @@ class DatasetReader(Dataset):
         mask= np.where(mask<0.5, 0, 1)
 
         img = img.float()
+        img = img /255
         img=self.transform(img)
         to_tensor=transforms.Compose([
             transforms.ToTensor()])
@@ -97,6 +104,11 @@ class DatasetReader(Dataset):
         prior =to_tensor(prior)
 
         img_masked=img*mask
+        print(img_masked)
+        print(mask)
+        print(prior)
+        print(img)
+        return
         return img_masked, mask, prior, img
 
     
