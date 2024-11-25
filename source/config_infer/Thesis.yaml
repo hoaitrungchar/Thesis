@@ -100,6 +100,6 @@ data:
   mask_path_test: "/home/vndata/testing_mask_dataset"
   name_dataset: "FFHQ"
   prior: 'canny'
-  batch_size: 6
+  batch_size: 1
   num_workers: 16
   pin_memory: False

@@ -97,8 +97,8 @@ class DenoisedModule(LightningModule):
             rescale_learned_sigmas=rescale_learned_sigmas,
             timestep_respacing=timestep_respacing,
             )
-        
         self.bce_loss = F.binary_cross_entropy_with_logits
+        self.it=0
         
     def training_step(self,batch):
         return 0
@@ -106,23 +106,38 @@ class DenoisedModule(LightningModule):
 
     def test_step(self,batch, batch_idx):
         inputs,maskeds,priors,groudtruths = batch
-        terms=self.training_method.p_sample_loop_progressive(
-            model = self.ema_model,
-            shape = batch.shape,
+        std = torch.Tensor([0.5,0.5,0.5]).view(3,1,1).to(self.device)
+        mean = torch.Tensor([0.5,0.5,0.5]).view(3,1,1).to(self.device)
+        init_mask = self.net_init_mask(inputs)
+        init_prior = self.net_init_prior(inputs)
+        print('maskeds before cat',maskeds)
+        print('priors before cat',priors)
+        print('input before cat',inputs)
+        input = torch.cat((inputs,init_mask,init_prior), dim =1)
+        print('input before',input)
+        input = self.training_method.q_sample(
+            x_start = input,
+            t = torch.tensor([self.num_timesteps-1,]*input.shape[0])
+        )
+
+        print('input after',input)
+        return
+        terms = self.training_method.p_sample_loop_progressive(
+            model = self.net,
+            shape = input.shape,
+            y0=input,
             noise = None,
             clip_denoised = True,
             model_kwargs = None,
-            device = f"cuda:{self.rank}",
+            device = f"cuda",
             progress=False
         )
-        
-        std = [0.5,0.5,0.5]
-        mean = [0.5,0.5,0.5]
         it = self.it
         for input in inputs:
             input = input * std + mean
-            input = input.detach().cpu().numpy()
-            input = Image.fromarray((input).astype(np.uint8))
+            input = input.detach().cpu().numpy().astype(np.uint8)
+            input = input.transpose(1, 2, 0)
+            input = Image.fromarray((input))
             input.save(f'/home/vndata/trung/output/input_{self.it}.png')
             it+=1
 
@@ -140,54 +155,49 @@ class DenoisedModule(LightningModule):
         for prior in priors:
             prior *= 255
             prior = prior.repeat(3, 1, 1) 
-            prior = prior.permute(1, 2, 0).detach().cpu().numpy()
-            prior = Image.fromarray((prior).astype(np.uint8))
+            prior = prior.permute(1, 2, 0).detach().cpu().numpy().astype(np.uint8)
+            prior = Image.fromarray((prior))
             prior.save(f'/home/vndata/trung/output/prior_{self.it}.png')
             it+=1
 
         it = self.it
         for groundtruth in groudtruths:
             groundtruth = groundtruth * std + mean
-            groundtruth = groundtruth.detach().cpu().numpy()
-            groundtruth = Image.fromarray((groundtruth).astype(np.uint8))
+            groundtruth = groundtruth.detach().cpu().numpy().astype(np.uint8)
+            groundtruth = groundtruth.transpose(1, 2, 0)
+            groundtruth = Image.fromarray((groundtruth))
             groundtruth.save(f'/home/vndata/trung/output/groundtruth_{self.it}.png')
             it+=1
 
         it = self.it
-        init_mask = self.net_init_mask(input)
-        init_prior = self.net_init_prior(input)
-        input = torch.cat((input,init_mask,init_prior), dim =1)
-        terms = self.training_method.p_sample_loop_progressive(
-            model = self.net,
-            shape = input.shape,
-            y0=input,
-            noise = None,
-            clip_denoised = True,
-            model_kwargs = None,
-            device = f"cuda:{self.rank}",
-            progress=False
-        )
-
         for term in terms:
+            print(term)
             img_predicted = term['sample']
+            img_predicted = torch.squeeze(img_predicted)
+            img_predicted = img_predicted[0:3,:,:]
             img_predicted = img_predicted * std + mean
-            img_predicted = img_predicted.detach().cpu().numpy()
-            img_predicted = Image.fromarray((img_predicted).astype(np.uint8))
-            img_predicted.save(f'/home/vndata/trung/output/image_predicted_{self.it}.png')
+            img_predicted = img_predicted.detach().cpu().numpy().astype(np.uint8)
+            img_predicted = img_predicted.transpose(1, 2, 0)
+            img_predicted = Image.fromarray((img_predicted))
+            img_predicted.save(f'/home/vndata/trung/output/image_predicted_{it}.png')
 
             mask_predicted = term['mask']
+            mask_predicted = torch.squeeze(mask_predicted)
+            mask_predicted = torch.sigmoid(mask_predicted)
             mask_predicted = mask_predicted * 255
             mask_predicted = mask_predicted.repeat(3, 1, 1)
             mask_predicted = mask_predicted.permute(1, 2, 0).detach().cpu().numpy()
             mask_predicted = Image.fromarray((mask_predicted).astype(np.uint8))
-            mask_predicted.save(f'/home/vndata/trung/output/mask_predicted_{self.it}.png')
+            mask_predicted.save(f'/home/vndata/trung/output/mask_predicted_{it}.png')
 
             prior_predicted = term['prior']
+            prior_predicted = torch.squeeze(prior_predicted)
+            prior_predicted = torch.sigmoid(prior_predicted)
             prior_predicted = prior_predicted * 255
-            mask_predicted = mask_predicted.repeat(3, 1, 1)
-            mask_predicted = mask_predicted.permute(1, 2, 0).detach().cpu().numpy()
+            prior_predicted = prior_predicted.repeat(3, 1, 1)
+            prior_predicted = prior_predicted.permute(1, 2, 0).detach().cpu().numpy()
             prior_predicted = Image.fromarray((prior_predicted).astype(np.uint8))
-            prior_predicted.save(f'/home/vndata/trung/output/prior_predicted_{self.it}.png')
+            prior_predicted.save(f'/home/vndata/trung/output/prior_predicted_{it}.png')
             it+=1
         self.it = it
         return 0

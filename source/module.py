@@ -150,7 +150,7 @@ class DenoisedModule(LightningModule):
         self.sampler= UniformSampler(self.num_timesteps)
         self.pretrained_path = pretrained_path
         self.training_method= create_gaussian_diffusion(
-            steps=num_timesteps,
+            steps=self.num_timesteps,
             learn_sigma=learn_sigma,
             sigma_small=sigma_small,
             noise_schedule=noise_schedule,
@@ -178,7 +178,7 @@ class DenoisedModule(LightningModule):
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
         self.log("train/loss", loss+prior_loss+mask_loss)
-        return loss +prior_loss +mask_loss
+        return loss
 
 
     def test_step(self,batch, batch_idx):
@@ -196,7 +196,7 @@ class DenoisedModule(LightningModule):
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
         self.log("test/loss", loss+prior_loss+mask_loss)
-        return loss +prior_loss +mask_loss
+        return loss
         
     def validation_step(self,batch, batch_idx):
         input,masked,prior,groudtruth = batch
@@ -213,7 +213,7 @@ class DenoisedModule(LightningModule):
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
         self.log("val/loss", loss+prior_loss+mask_loss)
-        return loss +prior_loss +mask_loss
+        return loss 
     
     def configure_optimizers(self):
        return torch.optim.Adam(self.parameters(), 

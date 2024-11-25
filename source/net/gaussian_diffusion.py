@@ -406,7 +406,6 @@ class GaussianDiffusion:
         return x0_update.type(original_dtype)
 
     def _predict_xstart_from_eps(self, x_t, t, eps):
-        assert x_t.shape == eps.shape
         return (
             _extract_into_tensor(self.sqrt_recip_alphas_cumprod, t, x_t.shape) * x_t
             - _extract_into_tensor(self.sqrt_recipm1_alphas_cumprod, t, x_t.shape) * eps
@@ -605,11 +604,12 @@ class GaussianDiffusion:
             )
             yield out
             img = out["sample"]
+            img = img[:,0:3,:,:]
             mask = out['mask']
             mask= th.sigmoid(mask)
             prior = out['prior']
             prior =th.sigmoid(prior)
-            img = th.cat((img,mask.prior), dim=1)
+            img = th.cat((img,mask,prior), dim=1)
 
     def _vb_terms_bpd(
         self, model, x_start, x_t, t, clip_denoised=True, model_kwargs=None
