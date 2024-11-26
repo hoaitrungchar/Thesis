@@ -9,6 +9,7 @@ from net.UniformSampler import UniformSampler
 from net.SimpleUnet import SimpleUnet
 from net.Unet import UNetModel
 import net.gaussian_diffusion as gd
+import copy
 from net.respace import SpacedDiffusion,space_timesteps
 # class MaskedPredictModule(LightningModule):
 #     def __init__(self, 
@@ -166,14 +167,18 @@ class DenoisedModule(LightningModule):
     def training_step(self,batch):
         input,masked,prior,groudtruth = batch
         input=input.float()
+        input_base=copy.deepcopy(input)
         masked=masked.float()
         groundtruth=groudtruth.float()
         init_mask=self.net_init_mask(input)
         init_prior=self.net_init_prior(input)
-        input = torch.cat((input,init_mask,init_prior), dim =1)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        term = self.training_method.training_losses(self.net, input ,indicies)
+        model_kwargs={
+            'mask':init_mask,
+            'prior':init_prior
+        }
+        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
@@ -188,10 +193,13 @@ class DenoisedModule(LightningModule):
         groundtruth=groudtruth.float()
         init_mask=self.net_init_mask(input)
         init_prior=self.net_init_prior(input)
-        input = torch.cat((input,init_mask,init_prior), dim =1)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        term = self.training_method.training_losses(self.net, input ,indicies)
+        model_kwargs={
+            'mask':init_mask,
+            'prior':init_prior
+        }
+        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
@@ -205,10 +213,13 @@ class DenoisedModule(LightningModule):
         groundtruth=groudtruth.float()
         init_mask=self.net_init_mask(input)
         init_prior=self.net_init_prior(input)
-        input = torch.cat((input,init_mask,init_prior), dim =1)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        term = self.training_method.training_losses(self.net, input ,indicies)
+        model_kwargs={
+            'mask':init_mask,
+            'prior':init_prior
+        }
+        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)

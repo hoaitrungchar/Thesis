@@ -113,7 +113,6 @@ class DenoisedModule(LightningModule):
         print('maskeds before cat',maskeds)
         print('priors before cat',priors)
         print('input before cat',inputs)
-        input = torch.cat((inputs,init_mask,init_prior), dim =1)
         print('input before',input)
         input = self.training_method.q_sample(
             x_start = input,
