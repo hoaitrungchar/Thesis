@@ -104,11 +104,6 @@ class DatasetReader(Dataset):
         prior =to_tensor(prior)
 
         img_masked=img*mask
-        print(img_masked)
-        print(mask)
-        print(prior)
-        print(img)
-        return
         return img_masked, mask, prior, img
 
     

@@ -7,6 +7,7 @@ trainer:
   max_epochs: 100
   precision: 32-true
   accelerator: cuda
+  devices: [3]
   num_nodes: 1
   enable_progress_bar: true
   sync_batchnorm: True
@@ -75,7 +76,7 @@ model:
     image_size: 256
     in_channels: 5
     model_channels: 32
-    out_channels: 5
+    out_channels: 3
     num_res_blocks: [1, 2, 2, 2, 2, 3, 4]
     attention_resolutions: [32, 16, 8]
     dropout: 0
@@ -96,10 +97,10 @@ model:
 
 # ---------------------------- DATA -------------------------------------------
 data:
-  path: "/home/vndata/trung/ffhq-dataset/images1024x1024"
-  mask_path_test: "/home/vndata/testing_mask_dataset"
+  path: "/data/FFHQ/images1024x1024"
+  mask_path_test: "/data/FFHQ/testing_mask_dataset"
   name_dataset: "FFHQ"
   prior: 'canny'
-  batch_size: 4
+  batch_size: 32
   num_workers: 16
   pin_memory: False

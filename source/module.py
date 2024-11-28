@@ -174,11 +174,11 @@ class DenoisedModule(LightningModule):
         init_prior=self.net_init_prior(input)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        model_kwargs={
-            'mask':init_mask,
-            'prior':init_prior
-        }
-        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
+        # model_kwargs={
+        #     'mask':init_mask,
+        #     'prior':init_prior
+        # }
+        term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
@@ -195,11 +195,11 @@ class DenoisedModule(LightningModule):
         init_prior=self.net_init_prior(input)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        model_kwargs={
-            'mask':init_mask,
-            'prior':init_prior
-        }
-        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
+        # model_kwargs={
+        #     'mask':init_mask,
+        #     'prior':init_prior
+        # }
+        term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
@@ -215,11 +215,11 @@ class DenoisedModule(LightningModule):
         init_prior=self.net_init_prior(input)
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        model_kwargs={
-            'mask':init_mask,
-            'prior':init_prior
-        }
-        term = self.training_method.training_losses(self.net, input ,indicies,model_kwargs=model_kwargs)
+        # model_kwargs={
+        #     'mask':init_mask,
+        #     'prior':init_prior
+        # }
+        term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)

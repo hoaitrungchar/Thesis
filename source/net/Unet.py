@@ -521,14 +521,14 @@ class UNetModel(nn.Module):
         self.out_prior = nn.Sequential(
             normalization(ch),
             nn.SiLU(),
-            conv_nd(dims, input_ch, out_channels, 3, padding=1),
+            conv_nd(dims, input_ch, 1, 3, padding=1),
         )
         self.out_mask = nn.Sequential(
             normalization(ch),
             nn.SiLU(),
-            conv_nd(dims, input_ch, out_channels, 3, padding=1),
+            conv_nd(dims, input_ch, 1, 3, padding=1),
         )
-    def forward(self, x, timesteps, y=None):
+    def forward(self, x, timesteps, mask, prior):
         """
         Apply the model to an input batch.
         :param x: an [N x C x ...] Tensor of inputs.
@@ -536,21 +536,22 @@ class UNetModel(nn.Module):
         :param y: an [N] Tensor of labels, if class-conditional.
         :return: an [N x C x ...] Tensor of outputs.
         """
-        assert (y is not None) == (
-            self.num_classes is not None
-        ), "must specify y if and only if the model is class-conditional"
+        # assert (y is not None) == (
+        #     self.num_classes is not None
+        # ), "must specify y if and only if the model is class-conditional"
 
         hs = []
         x_device = x.get_device() if th.cuda.is_available() else 'cpu'
+        x = th.cat((x,mask,prior),dim=1)
         timesteps = timesteps.to(x_device)
         self.time_embed=self.time_embed.to(x_device)
         timestep_embedding_output=timestep_embedding(timesteps, self.model_channels)
         emb = self.time_embed(timestep_embedding_output)
 
-        if self.num_classes is not None:
-            assert y.shape == (x.shape[0],)
+        # if self.num_classes is not None:
+        #     assert y.shape == (x.shape[0],)
             # emb = emb + self.label_emb(y)
-            emb=th.cat((emb,y['mask'],y['prior']),dim=1)
+        
 
 
         h = x.type(self.dtype)
