@@ -127,7 +127,7 @@ class DenoisedModule(LightningModule):
             y0=input,
             noise = None,
             clip_denoised = True,
-            model_kwargs = None,
+            model_kwargs = {'mask': init_mask, 'prior': init_prior},
             device = f"cuda",
             progress=False
         )
