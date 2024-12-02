@@ -110,17 +110,16 @@ class DenoisedModule(LightningModule):
         mean = torch.Tensor([0.5,0.5,0.5]).view(3,1,1).to(self.device)
         init_mask = self.net_init_mask(inputs)
         init_prior = self.net_init_prior(inputs)
-        print('maskeds before cat',maskeds)
-        print('priors before cat',priors)
-        print('input before cat',inputs)
-        print('input before',input)
+        print('maskeds',maskeds)
+        print('priors ',priors)
+        print('input',inputs)
+        print(groudtruths)
         input = self.training_method.q_sample(
-            x_start = input,
-            t = torch.tensor([self.num_timesteps-1,]*input.shape[0])
+            x_start = inputs,
+            t = torch.tensor([self.num_timesteps-1,]*inputs.shape[0])
         )
 
         print('input after',input)
-        return
         terms = self.training_method.p_sample_loop_progressive(
             model = self.net,
             shape = input.shape,
@@ -134,6 +133,7 @@ class DenoisedModule(LightningModule):
         it = self.it
         for input in inputs:
             input = input * std + mean
+            input = input *255
             input = input.detach().cpu().numpy().astype(np.uint8)
             input = input.transpose(1, 2, 0)
             input = Image.fromarray((input))
@@ -162,6 +162,7 @@ class DenoisedModule(LightningModule):
         it = self.it
         for groundtruth in groudtruths:
             groundtruth = groundtruth * std + mean
+            groundtruth=groundtruth*255
             groundtruth = groundtruth.detach().cpu().numpy().astype(np.uint8)
             groundtruth = groundtruth.transpose(1, 2, 0)
             groundtruth = Image.fromarray((groundtruth))
@@ -172,6 +173,7 @@ class DenoisedModule(LightningModule):
         for term in terms:
             print(term)
             img_predicted = term['sample']
+            img_predicted = img_predicted *255
             img_predicted = torch.squeeze(img_predicted)
             img_predicted = img_predicted[0:3,:,:]
             img_predicted = img_predicted * std + mean
