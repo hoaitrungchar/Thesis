@@ -14,5 +14,5 @@ if __name__ == "__main__":
         seed_everything_default=42,
         run=False,
     )
-    cli.trainer.test(cli.model, datamodule=cli.datamodule, ckpt_path="/home/vndata/trung/Thesis/source/checkpoint/epoch_042.ckpt")
+    cli.trainer.test(cli.model, datamodule=cli.datamodule, ckpt_path="/home/vndata/trung/Thesis/source/checkpoint/epoch_041.ckpt")
 

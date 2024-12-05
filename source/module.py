@@ -116,6 +116,7 @@ def create_gaussian_diffusion(
         loss_type=loss_type,
         rescale_timesteps=rescale_timesteps,
     )
+    
 
 class DenoisedModule(LightningModule):
     def __init__(self, 
@@ -163,73 +164,103 @@ class DenoisedModule(LightningModule):
             )
         
         self.bce_loss = F.binary_cross_entropy_with_logits
+        self.automatic_optimization = False
         
     def training_step(self,batch):
+        init_mask_trainer, init_prior_trainer, model_trainer = self.optimizers()
         input,masked,prior,groudtruth = batch
         input=input.float()
         input_base=copy.deepcopy(input)
         masked=masked.float()
         groundtruth=groudtruth.float()
+
         init_mask=self.net_init_mask(input)
+        loss_init_mask = self.bce_loss(init_mask,masked)
+        init_mask=torch.sigmoid(init_mask)
+        init_mask_trainer.zero_grad()
+        self.manual_backward(loss_init_mask)
+        init_mask_trainer.step()
+
         init_prior=self.net_init_prior(input)
+        loss_prior_mask = self.bce_loss(init_prior,prior)
+        init_prior=torch.sigmoid(init_prior)
+        init_prior.zero_grad()
+        self.manual_backward(loss_prior_mask)
+        init_prior.step()
+
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        # model_kwargs={
-        #     'mask':init_mask,
-        #     'prior':init_prior
-        # }
         term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("train/loss", loss+prior_loss+mask_loss)
+        self.log("train/loss", loss+0.5*prior_loss+0.5*mask_loss)
         return loss +0.5*prior_loss + 0.5*mask_loss
 
 
     def test_step(self,batch, batch_idx):
         input,masked,prior,groudtruth = batch
         input=input.float()
+        input_base=copy.deepcopy(input)
         masked=masked.float()
         groundtruth=groudtruth.float()
+
         init_mask=self.net_init_mask(input)
+        loss_init_mask = self.bce_loss(init_mask,masked)
+        init_mask=torch.sigmoid(init_mask)
+
         init_prior=self.net_init_prior(input)
+        loss_prior_mask = self.bce_loss(init_prior,prior)
+        init_prior=torch.sigmoid(init_prior)
+
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        # model_kwargs={
-        #     'mask':init_mask,
-        #     'prior':init_prior
-        # }
         term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("test/loss", loss+prior_loss+mask_loss)
+        self.log("test/loss", loss+0.5*prior_loss+0.5*mask_loss)
         return loss +0.5*prior_loss + 0.5*mask_loss
         
     def validation_step(self,batch, batch_idx):
         input,masked,prior,groudtruth = batch
         input=input.float()
+        input_base=copy.deepcopy(input)
         masked=masked.float()
         groundtruth=groudtruth.float()
+
         init_mask=self.net_init_mask(input)
+        loss_init_mask = self.bce_loss(init_mask,masked)
+        init_mask=torch.sigmoid(init_mask)
+
         init_prior=self.net_init_prior(input)
+        loss_prior_mask = self.bce_loss(init_prior,prior)
+        init_prior=torch.sigmoid(init_prior)
+
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
-        # model_kwargs={
-        #     'mask':init_mask,
-        #     'prior':init_prior
-        # }
         term = self.training_method.training_losses(self.net, input, indicies, model_kwargs={'mask': init_mask, 'prior': init_prior}, noise=None)
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("val/loss", loss+prior_loss+mask_loss)
+        self.log("val/loss", loss+0.5*prior_loss+0.5*mask_loss)
         return loss +0.5*prior_loss + 0.5*mask_loss
     
     def configure_optimizers(self):
-       return torch.optim.Adam(self.parameters(), 
+        init_mask_trainer=torch.optim.Adam(self.parameters(), 
                                lr=self.hparams.lr,
                                betas=[self.hparams.beta_1,self.hparams.beta_2],
                                weight_decay=self.hparams.weight_decay
                                       )
+        init_prior_trainer=torch.optim.Adam(self.parameters(), 
+                               lr=self.hparams.lr,
+                               betas=[self.hparams.beta_1,self.hparams.beta_2],
+                               weight_decay=self.hparams.weight_decay
+                                      )
+        model_trainer=torch.optim.Adam(self.parameters(), 
+                               lr=self.hparams.lr,
+                               betas=[self.hparams.beta_1,self.hparams.beta_2],
+                               weight_decay=self.hparams.weight_decay
+                                      )
+        return init_mask_trainer, init_prior_trainer, model_trainer
     

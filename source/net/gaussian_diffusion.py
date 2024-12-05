@@ -604,12 +604,11 @@ class GaussianDiffusion:
             )
             yield out
             img = out["sample"]
-            img = img[:,0:3,:,:]
             mask = out['mask']
             mask= th.sigmoid(mask)
             prior = out['prior']
             prior =th.sigmoid(prior)
-            img = th.cat((img,mask,prior), dim=1)
+            model_kwargs={'mask': mask, 'prior': prior}
 
     def _vb_terms_bpd(
         self, model, x_start, x_t, t, clip_denoised=True, model_kwargs=None

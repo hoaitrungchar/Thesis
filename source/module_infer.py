@@ -59,7 +59,7 @@ class DenoisedModule(LightningModule):
                 net_init_mask : SimpleUnet,
                 net_init_prior: SimpleUnet,
                 pretrained_path: str = "",
-                num_timesteps: int =500,
+                num_timesteps: int =2000,
                 lr: float = 5e-4,
                 beta_1: float = 0.9,
                 beta_2: float = 0.99,
@@ -105,6 +105,7 @@ class DenoisedModule(LightningModule):
 
 
     def test_step(self,batch, batch_idx):
+        print(self.num_timesteps)
         inputs,maskeds,priors,groudtruths = batch
         std = torch.Tensor([0.5,0.5,0.5]).view(3,1,1).to(self.device)
         mean = torch.Tensor([0.5,0.5,0.5]).view(3,1,1).to(self.device)
