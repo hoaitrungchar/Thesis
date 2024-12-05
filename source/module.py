@@ -184,9 +184,9 @@ class DenoisedModule(LightningModule):
         init_prior=self.net_init_prior(input)
         loss_prior_mask = self.bce_loss(init_prior,prior)
         init_prior=torch.sigmoid(init_prior)
-        init_prior.zero_grad()
+        init_prior_trainer.zero_grad()
         self.manual_backward(loss_prior_mask)
-        init_prior.step()
+        init_prior_trainer.step()
 
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
@@ -194,8 +194,12 @@ class DenoisedModule(LightningModule):
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("train/loss", loss+0.5*prior_loss+0.5*mask_loss)
-        return loss +0.5*prior_loss + 0.5*mask_loss
+        loss_model=loss+0.5*prior_loss+0.5*mask_loss
+        model_trainer.zero_grad()
+        self.manual_backward(loss_model)
+        model_trainer.step()
+        self.log("train/loss", loss_model)
+        return loss_model
 
 
     def test_step(self,batch, batch_idx):
