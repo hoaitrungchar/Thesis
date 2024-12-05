@@ -547,10 +547,6 @@ class UNetModel(nn.Module):
         self.time_embed=self.time_embed.to(x_device)
         timestep_embedding_output=timestep_embedding(timesteps, self.model_channels)
         emb = self.time_embed(timestep_embedding_output)
-
-        # if self.num_classes is not None:
-        #     assert y.shape == (x.shape[0],)
-            # emb = emb + self.label_emb(y)
         
 
 
@@ -559,8 +555,8 @@ class UNetModel(nn.Module):
             h = module(h, emb)
             hs.append(h)
         h = self.middle_block(h, emb)
-        h_prior=self.middle_block(h, emb)
-        h_mask=self.middle_block(h, emb)
+        h_prior=0
+        h_mask=0
         for i, module in enumerate(self.output_blocks):
             if i== len(self.output_blocks)-1:
                 input_final=th.cat([h, hs.pop()], dim=1)

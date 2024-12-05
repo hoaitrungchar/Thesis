@@ -120,7 +120,6 @@ class DenoisedModule(LightningModule):
             t = torch.tensor([self.num_timesteps-1,]*inputs.shape[0])
         )
 
-        print('input after',input)
         terms = self.training_method.p_sample_loop_progressive(
             model = self.net,
             shape = input.shape,
