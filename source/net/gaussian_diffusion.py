@@ -284,7 +284,7 @@ class GaussianDiffusion:
 
         B, C = x.shape[:2]
         assert t.shape == (B,)
-        model_output, mask, prior = model(x, self._scale_timesteps(t), **model_kwargs)
+        model_output, mask,prior = model(x, self._scale_timesteps(t), **model_kwargs)
 
         if self.model_var_type in [ModelVarType.LEARNED, ModelVarType.LEARNED_RANGE]:
             assert model_output.shape == (B, C * 2, *x.shape[2:])
@@ -482,7 +482,7 @@ class GaussianDiffusion:
         )  # no noise when t == 0
         sample = out["mean"] + nonzero_mask * th.exp(0.5 * out["log_variance"]) * noise
         return {"sample": sample, "pred_xstart": out["pred_xstart"], 'mask': out['mask'], 'prior': out['prior']}
-
+    # return {"sample": sample, "pred_xstart": out["pred_xstart"], 'mask': out['mask'], 'prior': out['prior']}
     def p_sample_loop(
         self,
         model,
@@ -642,7 +642,9 @@ class GaussianDiffusion:
 
         # At the first timestep return the decoder NLL,
         # otherwise return KL(q(x_{t-1}|x_t,x_0) || p(x_{t-1}|x_t))
-        output = th.where((t == 0), decoder_nll, kl)
+        device=x_start.get_device()
+        t=t.to(device)
+        output = th.where((t == 0), decoder_nll.to(device), kl.to(device))
         return {"output": output, "pred_xstart": out["pred_xstart"], 'mask': out['mask'],'prior': out['prior']}
 
     def training_losses(self, model, x_start, t, model_kwargs=None, noise=None):
@@ -691,7 +693,7 @@ class GaussianDiffusion:
                 # it affect our mean prediction.
                 frozen_out = th.cat([model_output.detach(), model_var_values], dim=1)
                 terms["vb"] = self._vb_terms_bpd(
-                    model=lambda *args, r=frozen_out: r,
+                    model=lambda *args, r=frozen_out: (r,0,0),
                     x_start=x_start,
                     x_t=x_t,
                     t=t,

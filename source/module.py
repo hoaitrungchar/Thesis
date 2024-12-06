@@ -164,10 +164,8 @@ class DenoisedModule(LightningModule):
             )
         
         self.bce_loss = F.binary_cross_entropy_with_logits
-        self.automatic_optimization = False
         
     def training_step(self,batch):
-        init_mask_trainer, init_prior_trainer, model_trainer = self.optimizers()
         input,masked,prior,groudtruth = batch
         input=input.float()
         input_base=copy.deepcopy(input)
@@ -175,18 +173,12 @@ class DenoisedModule(LightningModule):
         groundtruth=groudtruth.float()
 
         init_mask=self.net_init_mask(input)
-        loss_init_mask = self.bce_loss(init_mask,masked)
+        # loss_init_mask = self.bce_loss(init_mask,masked)
         init_mask=torch.sigmoid(init_mask)
-        init_mask_trainer.zero_grad()
-        self.manual_backward(loss_init_mask)
-        init_mask_trainer.step()
 
         init_prior=self.net_init_prior(input)
-        loss_prior_mask = self.bce_loss(init_prior,prior)
+        # loss_prior_mask = self.bce_loss(init_prior,prior)
         init_prior=torch.sigmoid(init_prior)
-        init_prior_trainer.zero_grad()
-        self.manual_backward(loss_prior_mask)
-        init_prior_trainer.step()
 
         B,N,H,W=input.shape
         indicies, weight=self.sampler.sample(B)
@@ -195,9 +187,6 @@ class DenoisedModule(LightningModule):
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
         loss_model=loss+0.5*prior_loss+0.5*mask_loss
-        model_trainer.zero_grad()
-        self.manual_backward(loss_model)
-        model_trainer.step()
         self.log("train/loss", loss_model)
         return loss_model
 
@@ -210,11 +199,11 @@ class DenoisedModule(LightningModule):
         groundtruth=groudtruth.float()
 
         init_mask=self.net_init_mask(input)
-        loss_init_mask = self.bce_loss(init_mask,masked)
+        # loss_init_mask = self.bce_loss(init_mask,masked)
         init_mask=torch.sigmoid(init_mask)
 
         init_prior=self.net_init_prior(input)
-        loss_prior_mask = self.bce_loss(init_prior,prior)
+        # loss_prior_mask = self.bce_loss(init_prior,prior)
         init_prior=torch.sigmoid(init_prior)
 
         B,N,H,W=input.shape
@@ -223,8 +212,9 @@ class DenoisedModule(LightningModule):
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("test/loss", loss+0.5*prior_loss+0.5*mask_loss)
-        return loss +0.5*prior_loss + 0.5*mask_loss
+        loss_model=loss+0.5*prior_loss+0.5*mask_loss
+        self.log("test/loss", loss_model)
+        return loss_model
         
     def validation_step(self,batch, batch_idx):
         input,masked,prior,groudtruth = batch
@@ -247,24 +237,16 @@ class DenoisedModule(LightningModule):
         loss = term['loss'].mean()
         prior_loss= self.bce_loss(term['mask'],masked)
         mask_loss= self.bce_loss(term['prior'],prior)
-        self.log("val/loss", loss+0.5*prior_loss+0.5*mask_loss)
-        return loss +0.5*prior_loss + 0.5*mask_loss
+        loss_model=loss+0.5*prior_loss+0.5*mask_loss
+        self.log("val/loss", loss_model)
+        return loss_model
     
     def configure_optimizers(self):
-        init_mask_trainer=torch.optim.Adam(self.parameters(), 
-                               lr=self.hparams.lr,
-                               betas=[self.hparams.beta_1,self.hparams.beta_2],
-                               weight_decay=self.hparams.weight_decay
-                                      )
-        init_prior_trainer=torch.optim.Adam(self.parameters(), 
-                               lr=self.hparams.lr,
-                               betas=[self.hparams.beta_1,self.hparams.beta_2],
-                               weight_decay=self.hparams.weight_decay
-                                      )
+
         model_trainer=torch.optim.Adam(self.parameters(), 
                                lr=self.hparams.lr,
                                betas=[self.hparams.beta_1,self.hparams.beta_2],
                                weight_decay=self.hparams.weight_decay
                                       )
-        return init_mask_trainer, init_prior_trainer, model_trainer
+        return model_trainer
     
